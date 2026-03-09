@@ -1,6 +1,7 @@
 import { requireUser } from "@/lib/session";
 import { db } from "@/lib/db";
 import { logoutAction } from "@/actions/auth.actions";
+import Link from "next/link";
 
 function getBorrowingStatus(dueDate: Date, returnedAt: Date | null) {
   if (returnedAt) return "Rendu";
@@ -66,6 +67,14 @@ export default async function ProfilePage() {
               Déconnexion
             </button>
           </form>
+          <div className="mt-4">
+  <Link
+    href="/history"
+    className="inline-block rounded-full border px-4 py-3 text-sm font-medium"
+  >
+    Voir l’historique
+  </Link>
+</div>
         </aside>
 
         <section className="rounded-3xl bg-white p-6 shadow">
