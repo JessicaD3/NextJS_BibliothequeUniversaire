@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NEXTJS | Rest API - Bibliothèque universitaire
 
-## Getting Started
+Application web Next.js + MySQL pour la gestion d'une bibliothèque universitaire
+Déployée sur Vercel, et hébergée sur Aiven pour la base MySQL 
 
-First, run the development server:
+- **Lien du site vercel:** https://next-js-bibliotheque-universaire.vercel.app/
+
+## Prérequis
+
+Avant de lancer le projet, il faut avoir installé :
+
+- **Node.js** (version 20 recommandée)
+- **npm**
+- **MySQL Workbench**
+
+---
+
+# 1. Lancement en local 
+
+## Étape 1 — Extraire le projet
+Décompresser le fichier `.zip` dans un dossier local.
+
+---
+
+## Étape 2 — Installer les dépendances
+Ouvrir un terminal à la racine du projet puis exécuter :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+```
+## Étape 3 — Configurer les variables d'environnements 
+Créer un fichier: .env
+
+Avec le contenu suivant:
+```bash
+DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/bibliotheque"
+
+DATABASE_HOST="HOST"
+DATABASE_PORT="PORT"
+DATABASE_USER="USER"
+DATABASE_PASSWORD="PASSWORD"
+DATABASE_NAME="bibliotheque"
+
+JWT_ACCESS_SECRET="change-me-access-secret"
+JWT_REFRESH_SECRET="change-me-refresh-secret"
+
+JWT_ACCESS_EXPIRES_IN="15m"
+JWT_REFRESH_EXPIRES_IN="7d"
+
+NODE_ENV="development"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Étape 4 — Générer le client Prisma  
+```bash
+npx prisma generate
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Étape 5 —Appliquer les migrations
+```bash
+npx prisma migrate deploy
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Étape 6 — Ajouter les données de démonstration  
+```bash
+npx prisma db seed
+```
 
-## Learn More
+## Étape 7 — Ajouter les données de démonstration  
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+L’application sera accessible à l’adresse :
+```bash
+http://localhost:3000
+```
+==============================================
+===============================================
+## Fonctionalités: 
+**Authentification**
+- Inscription utilisateur
+- Connexion
+- Gestion de sessions avec JWT
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Catalogue**
+- Liste de livres
+- Recherche par titre ou auteur
+- filtrage par catégorie
+- pagination 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Emprunts de Livres**
+Règles métiers:
+- Un utilisateur peut emprunter maximum 3 livres
+- Un emprunt dure 14 jours
+- Un livre indisponible ne peut pas être emprunté
 
-## Deploy on Vercel
+**Historique**
+- Liste des emprunts
+- Statut: En cours | Rendu | En retard
+- Possibilité de retourner un livre 
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+===================================================
+## Technologies utilisées
+- NextJS
+- React
+- TypeScript
+- Prisma
+- MySQL
+- Tailwind CSS
+- Vercel
+- Aiven 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
