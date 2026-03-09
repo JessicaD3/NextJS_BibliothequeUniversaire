@@ -7,6 +7,8 @@ type BooksPageProps = {
     q?: string;
     category?: string;
     page?: string;
+    message?: string;
+    type?: string;
   }>;
 };
 
@@ -16,25 +18,20 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
   await requireUser();
 
   const params = await searchParams;
+
   const q = params.q?.trim() ?? "";
   const category = params.category?.trim() ?? "";
   const page = Number(params.page ?? "1");
+  const message = params.message ?? "";
+  const type = params.type ?? "";
 
   const where = {
     AND: [
       q
         ? {
             OR: [
-              {
-                title: {
-                  contains: q,
-                },
-              },
-              {
-                author: {
-                  contains: q,
-                },
-              },
+              { title: { contains: q } },
+              { author: { contains: q } },
             ],
           }
         : {},
@@ -88,6 +85,18 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
           {total} résultat{total > 1 ? "s" : ""}
         </span>
       </div>
+
+      {message ? (
+        <div
+          className={`mb-6 rounded-2xl px-4 py-3 text-sm font-medium ${
+            type === "success"
+              ? "bg-emerald-100 text-emerald-700"
+              : "bg-red-100 text-red-700"
+          }`}
+        >
+          {message}
+        </div>
+      ) : null}
 
       <form className="mb-6 grid gap-4 rounded-3xl bg-white p-4 shadow md:grid-cols-[1fr_220px_140px]">
         <input

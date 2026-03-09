@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/session";
+import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 export async function borrowBook(bookId: string) {
@@ -9,14 +10,18 @@ export async function borrowBook(bookId: string) {
 
   const book = await db.book.findUnique({
     where: { id: bookId },
+    select: {
+      id: true,
+      available: true,
+    },
   });
 
   if (!book) {
-    throw new Error("Livre introuvable");
+    redirect("/books?message=Livre introuvable&type=error");
   }
 
   if (!book.available) {
-    throw new Error("Livre indisponible");
+    redirect("/books?message=Livre indisponible&type=error");
   }
 
   const activeBorrowings = await db.borrowing.count({
@@ -27,7 +32,7 @@ export async function borrowBook(bookId: string) {
   });
 
   if (activeBorrowings >= 3) {
-    throw new Error("Maximum 3 emprunts atteints");
+    redirect("/books?message=Maximum de 3 emprunts atteint&type=error");
   }
 
   const dueDate = new Date();
@@ -37,17 +42,20 @@ export async function borrowBook(bookId: string) {
     db.borrowing.create({
       data: {
         userId: user.id,
-        bookId,
+        bookId: book.id,
         dueDate,
       },
     }),
-
     db.book.update({
-      where: { id: bookId },
+      where: { id: book.id },
       data: { available: false },
     }),
   ]);
 
   revalidatePath("/books");
   revalidatePath("/profile");
+  revalidatePath(`/books/${book.id}`);
+  revalidatePath("/history");
+
+  redirect("/books?message=Livre emprunté avec succès&type=success");
 }

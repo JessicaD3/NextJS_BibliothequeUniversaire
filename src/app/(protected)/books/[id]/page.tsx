@@ -36,7 +36,7 @@ export default async function BookDetailPage({ params }: BookDetailPageProps) {
         <h1 className="mt-2 text-3xl font-bold">{book.title}</h1>
         <p className="mt-2 text-slate-600">{book.author}</p>
       </div>
-      <form
+<form
   action={async () => {
     "use server";
     await borrowBook(book.id);
