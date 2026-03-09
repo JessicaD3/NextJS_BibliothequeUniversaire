@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/session";
 import { returnBook } from "@/actions/return.actions";
+import Link from "next/link";
 
 function getStatus(dueDate: Date, returnedAt: Date | null) {
   if (returnedAt) return "Rendu";
@@ -142,6 +143,12 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
           </table>
         </div>
       </div>
+          <Link
+      href="/profile"
+      className="mb-3 inline-block rounded-full border px-4 py-2 text-sm font-medium"
+    >
+      Retour au profil
+    </Link>
     </main>
   );
 }

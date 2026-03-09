@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { BookCard } from "@/components/books/book-card";
 import { requireUser } from "@/lib/session";
+import Link from "next/link";
 
 type BooksPageProps = {
   searchParams: Promise<{
@@ -142,6 +143,7 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
         </div>
       )}
 
+      
       <div className="mt-8 flex items-center justify-between">
         <span className="text-sm text-slate-600">
           Page {page} sur {totalPages}
@@ -170,6 +172,12 @@ export default async function BooksPage({ searchParams }: BooksPageProps) {
             Suivant
           </a>
         </div>
+            <Link
+      href="/profile"
+      className="mb-3 inline-block rounded-full border px-4 py-2 text-sm font-medium"
+    >
+      Retour au profil
+    </Link>
       </div>
     </main>
   );

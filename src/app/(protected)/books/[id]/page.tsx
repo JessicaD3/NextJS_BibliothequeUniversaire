@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/session";
 import { borrowBook } from "@/actions/borrow.actions";
+import Link from "next/link";
 
 type BookDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -50,6 +51,14 @@ export default async function BookDetailPage({ params }: BookDetailPageProps) {
     {book.available ? "Emprunter ce livre" : "Livre indisponible"}
   </button>
 </form>
+<div className="mt-8 flex gap-3">
+  <Link
+    href="/books"
+    className="rounded-full border px-4 py-3 text-sm font-medium"
+  >
+    Retour au catalogue
+  </Link>
+</div>
     </main>
   );
 }

@@ -62,11 +62,12 @@ export default async function ProfilePage() {
             </p>
           </div>
 
-          <form action={logoutAction} className="mt-6">
-            <button className="rounded-full bg-slate-900 px-4 py-3 text-white">
-              Déconnexion
-            </button>
-          </form>
+              <Link
+    href="/books"
+    className="inline-block rounded-full border px-4 py-3 text-sm font-medium"
+  >
+    Voir le catalogue de livres
+  </Link>
           <div className="mt-4">
   <Link
     href="/history"
@@ -74,6 +75,11 @@ export default async function ProfilePage() {
   >
     Voir l’historique
   </Link>
+            <form action={logoutAction} className="mt-6">
+            <button className="rounded-full bg-slate-900 px-4 py-3 text-white">
+              Déconnexion
+            </button>
+          </form>
 </div>
         </aside>
 
