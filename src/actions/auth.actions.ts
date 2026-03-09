@@ -6,11 +6,10 @@ import { db } from "@/lib/db";
 import { loginSchema, signupSchema } from "@/lib/validations/auth";
 import { clearAuthCookies, setAuthCookies } from "@/lib/cookies";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
-
-export type ActionState = {
-  success: boolean;
-  message: string;
-};
+import {
+  createErrorState,
+  type ActionState,
+} from "@/lib/action-result";
 
 export async function signupAction(
   _prevState: ActionState,
@@ -25,10 +24,9 @@ export async function signupAction(
     });
 
     if (!parsed.success) {
-      return {
-        success: false,
-        message: parsed.error.issues[0]?.message ?? "Données invalides",
-      };
+      return createErrorState(
+        parsed.error.issues[0]?.message ?? "Données invalides",
+      );
     }
 
     const existingUser = await db.user.findUnique({
@@ -37,10 +35,7 @@ export async function signupAction(
     });
 
     if (existingUser) {
-      return {
-        success: false,
-        message: "Un compte existe déjà avec cet email",
-      };
+      return createErrorState("Un compte existe déjà avec cet email");
     }
 
     const passwordHash = await bcrypt.hash(parsed.data.password, 10);
@@ -73,10 +68,7 @@ export async function signupAction(
 
     await setAuthCookies(accessToken, refreshToken);
   } catch {
-    return {
-      success: false,
-      message: "Erreur serveur pendant l'inscription",
-    };
+    return createErrorState("Erreur serveur pendant l'inscription");
   }
 
   redirect("/profile");
@@ -93,10 +85,9 @@ export async function loginAction(
     });
 
     if (!parsed.success) {
-      return {
-        success: false,
-        message: parsed.error.issues[0]?.message ?? "Données invalides",
-      };
+      return createErrorState(
+        parsed.error.issues[0]?.message ?? "Données invalides",
+      );
     }
 
     const user = await db.user.findUnique({
@@ -110,10 +101,7 @@ export async function loginAction(
     });
 
     if (!user) {
-      return {
-        success: false,
-        message: "Identifiants invalides",
-      };
+      return createErrorState("Identifiants invalides");
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -122,10 +110,7 @@ export async function loginAction(
     );
 
     if (!isPasswordValid) {
-      return {
-        success: false,
-        message: "Identifiants invalides",
-      };
+      return createErrorState("Identifiants invalides");
     }
 
     const accessToken = await signAccessToken({
@@ -142,10 +127,7 @@ export async function loginAction(
 
     await setAuthCookies(accessToken, refreshToken);
   } catch {
-    return {
-      success: false,
-      message: "Erreur serveur pendant la connexion",
-    };
+    return createErrorState("Erreur serveur pendant la connexion");
   }
 
   redirect("/profile");

@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction, type ActionState } from "@/actions/auth.actions";
+import { loginAction } from "@/actions/auth.actions";
+import type { ActionState } from "@/lib/action-result";
 
 const initialState: ActionState = {
   success: false,

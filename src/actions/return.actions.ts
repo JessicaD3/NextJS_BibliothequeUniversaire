@@ -11,6 +11,11 @@ import {
 } from "@/lib/action-result";
 
 export async function returnBook(borrowingId: string) {
+  let redirectPath = buildSuccessRedirect(
+    "/history",
+    "Livre rendu avec succès",
+  );
+
   try {
     const user = await requireUser();
 
@@ -27,35 +32,33 @@ export async function returnBook(borrowingId: string) {
     });
 
     if (!borrowing) {
-      redirect(buildErrorRedirect("/history", "Emprunt introuvable"));
+      redirectPath = buildErrorRedirect("/history", "Emprunt introuvable");
+    } else {
+      await db.$transaction([
+        db.borrowing.update({
+          where: { id: borrowing.id },
+          data: {
+            returnedAt: new Date(),
+          },
+        }),
+        db.book.update({
+          where: { id: borrowing.bookId },
+          data: {
+            available: true,
+          },
+        }),
+      ]);
+
+      revalidatePath("/profile");
+      revalidatePath("/books");
+      revalidatePath("/history");
     }
-
-    await db.$transaction([
-      db.borrowing.update({
-        where: { id: borrowing.id },
-        data: {
-          returnedAt: new Date(),
-        },
-      }),
-      db.book.update({
-        where: { id: borrowing.bookId },
-        data: {
-          available: true,
-        },
-      }),
-    ]);
-
-    revalidatePath("/profile");
-    revalidatePath("/books");
-    revalidatePath("/history");
-
-    redirect(buildSuccessRedirect("/history", "Livre rendu avec succès"));
   } catch (error) {
-    redirect(
-      buildErrorRedirect(
-        "/history",
-        getErrorMessage(error, "Erreur serveur pendant le retour"),
-      ),
+    redirectPath = buildErrorRedirect(
+      "/history",
+      getErrorMessage(error, "Erreur serveur pendant le retour"),
     );
   }
+
+  redirect(redirectPath);
 }
